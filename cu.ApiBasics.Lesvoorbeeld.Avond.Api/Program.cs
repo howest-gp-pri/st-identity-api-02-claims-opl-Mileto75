@@ -95,6 +95,10 @@ namespace Pri.Drinks.Api
                     //check the user's birthdate
                     var userBirthDateClaim = context.User
                         .Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.DateOfBirth));
+                    if(userBirthDateClaim == null )
+                    {
+                        return false;
+                    }
                     var userBirthDate = DateTime.Parse(userBirthDateClaim.Value);
                     if(DateTime.Now.Year - userBirthDate.Year >= 18)
                         return true;
