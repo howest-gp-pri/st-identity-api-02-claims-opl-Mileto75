@@ -71,6 +71,7 @@ namespace cu.ApiBasics.Lesvoorbeeld.Avond.Infrastructure.Data.Seeding
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Firstname = "Bart",
                 Lastname = "Soete",
+                DateOfBirth = DateTime.Parse("25/12/1972"),
             };
             var user = new ApplicationUser
             {
@@ -83,6 +84,7 @@ namespace cu.ApiBasics.Lesvoorbeeld.Avond.Infrastructure.Data.Seeding
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Firstname = "Mileto",
                 Lastname = "Di Marco",
+                DateOfBirth = DateTime.Parse("25/12/2010"),
             };
             admin.PasswordHash = passwordHasher.HashPassword(admin, "Test123");
             user.PasswordHash = passwordHasher.HashPassword(user, "Test123");

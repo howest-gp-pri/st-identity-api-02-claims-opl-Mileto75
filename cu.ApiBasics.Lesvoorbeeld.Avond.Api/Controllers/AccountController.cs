@@ -46,6 +46,8 @@ namespace cu.ApiBasics.Lesvoorbeeld.Avond.Api.Controllers
             var claims = await _userManager.GetClaimsAsync(user);
             //add userId to claims
             claims.Add(new Claim(ClaimTypes.PrimarySid, user.Id));
+            //add birthdate as claim to claims in token
+            claims.Add(new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString()));
             //generate token
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JWTConfiguration:SigninKey")));
 

@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using System.Linq;
+using System;
 
 namespace Pri.Drinks.Api
 {
@@ -59,6 +61,15 @@ namespace Pri.Drinks.Api
                 RequireExpirationTime = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTConfiguration:SigninKey"]))
             });
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.AllowAnyOrigin();
+                });
+            });
             //add authorization policies
             builder.Services.AddAuthorization(options =>
             {
@@ -78,6 +89,17 @@ namespace Pri.Drinks.Api
                         return false;
                     }
                     ));
+                options.AddPolicy("18+", policy =>
+                policy.RequireAssertion(context =>
+                {
+                    //check the user's birthdate
+                    var userBirthDateClaim = context.User
+                        .Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.DateOfBirth));
+                    var userBirthDate = DateTime.Parse(userBirthDateClaim.Value);
+                    if(DateTime.Now.Year - userBirthDate.Year >= 18)
+                        return true;
+                    return false;
+                }));
             });
             //register the repository service
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -106,7 +128,7 @@ namespace Pri.Drinks.Api
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCors();
 
             app.MapControllers();
 
